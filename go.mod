@@ -1,4 +1,4 @@
-module github.com/natalie-o-perret/restish-plugin-workflow
+module github.com/natalie-o-perret/restish-plugin-arazzo
 
 go 1.25.7
 

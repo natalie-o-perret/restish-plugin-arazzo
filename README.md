@@ -1,6 +1,6 @@
-# restish-plugin-workflow
+# restish-plugin-arazzo
 
-`restish-plugin-workflow` builds the `restish-workflow` plugin, which adds
+`restish-plugin-arazzo` builds the `restish-workflow` plugin, which adds
 `restish workflow run FILE`. It executes Arazzo 1.0.x documents containing one
 workflow across existing Restish API profiles.
 
