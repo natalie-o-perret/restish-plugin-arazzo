@@ -21,6 +21,14 @@ the implementation aligned with the workflow contract in `README.md`.
 - `workflow.go`: command handling and workflow execution.
 - `sources.go`: Restish API loading and Arazzo source mapping.
 - `executor.go`: Arazzo operation execution through Restish.
+- `operation.go`: OpenAPI operation lookup and parameter metadata.
+- `operation_id.go`: source-qualified operation ID lookup.
+- `operation_path.go`: source-qualified operation path lookup.
+- `parameters.go`: path, query, and header serialization.
+- `locations.go`: workflow-to-OpenAPI parameter location checks.
+- `values.go`: primitive and array parameter values.
+- `decode.go`: recursive runtime value decoding.
+- `result.go`: workflow output decoding and fallback.
 - `selection.go`: API-backed workflow input selection.
 - `choices.go`: selector response validation and rendering.
 - `table.go`: boxed single-object table rendering.

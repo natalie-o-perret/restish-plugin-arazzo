@@ -29,6 +29,9 @@ func run(_ string, args []string, client *plugin.CommandClient) error {
 		return fmt.Errorf("one-workflow Arazzo document with at least one source required")
 	}
 	workflow := doc.Workflows[0]
+	if result := az.Validate(doc); result != nil && result.HasErrors() {
+		return result
+	}
 	var inputsDoc struct{ Required []string }
 	var meta workflowMeta
 	if workflow.Inputs != nil {
@@ -43,14 +46,11 @@ func run(_ string, args []string, client *plugin.CommandClient) error {
 			}
 		}
 	}
-	exec := &executor{client: client}
 	sources, err := loadSources(client, doc)
 	if err != nil {
 		return err
 	}
-	if result := az.Validate(doc); result != nil && result.HasErrors() {
-		return result
-	}
+	exec := &executor{client: client, sources: sources, params: indexParameterLocations(doc, workflow)}
 	inputs := map[string]any{}
 	if meta.Select != nil {
 		value, err := selectInput(client, meta.Select, sources)
@@ -78,12 +78,16 @@ func run(_ string, args []string, client *plugin.CommandClient) error {
 	if !result.Success {
 		return fmt.Errorf("workflow failed: %v", result.Error)
 	}
+	output, err := workflowOutput(result, exec.output)
+	if err != nil {
+		return err
+	}
 	if meta.Format == "table" && os.Getenv("RSH_OUTPUT_FORMAT") == "" {
-		formatted, err := table(exec.output, meta.Columns)
+		formatted, err := table(output, meta.Columns)
 		if err != nil {
 			return err
 		}
 		return client.WriteStdout(formatted)
 	}
-	return client.Response(200, nil, exec.output)
+	return client.Response(200, nil, output)
 }

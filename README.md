@@ -41,13 +41,19 @@ arazzo               0.1.0      capabilities: command
 
 - The document contains exactly one workflow and one or more OpenAPI sources.
 - Each source `name` is a registered Restish API name.
-- Steps use source-qualified `operationPath`; `operationId` is not supported.
+- Steps may use source-qualified `operationPath` or `operationId`. With multiple
+  sources, qualify IDs as `$sourceDescriptions.SOURCE.OPERATION`.
 - Required string workflow inputs are prompted interactively unless supplied by
   the API-backed selector below.
 - Non-string workflow inputs are not yet supported.
-- Parameters are not yet mapped into path, query, or headers. Inputs can be
-  used in Arazzo request bodies.
-- The last HTTP response body is the command output.
+- Primitive and array parameters are mapped into OpenAPI path, query, and
+  header locations. Objects and non-default serialization styles are rejected.
+- Parameters with duplicate names across locations or `content` serialization
+  are not supported.
+- Workflow parameter locations must match their OpenAPI operation definitions.
+- Externally referenced OpenAPI operations and parameters are not yet supported.
+- Declared workflow outputs are the command output. Without them, the last HTTP
+  response body is used.
 
 Optional workflow metadata:
 
