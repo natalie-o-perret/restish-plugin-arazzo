@@ -30,24 +30,11 @@ func run(_ string, args []string, client *plugin.CommandClient) error {
 	}
 	workflow := doc.Workflows[0]
 	var inputsDoc struct{ Required []string }
-	var meta struct {
-		Format  string   `yaml:"format"`
-		Columns []string `yaml:"columns"`
-	}
+	var meta workflowMeta
 	if workflow.Inputs != nil {
 		if err := workflow.Inputs.Decode(&inputsDoc); err != nil {
 			return fmt.Errorf("decode workflow inputs: %w", err)
 		}
-	}
-	inputs := map[string]any{}
-	for _, name := range inputsDoc.Required {
-		answer, err := client.Prompt(name+": ", false)
-		if err != nil {
-			return err
-		} else if answer.Error != "" {
-			return fmt.Errorf("prompt: %s", answer.Error)
-		}
-		inputs[name] = answer.Value
 	}
 	if workflow.Extensions != nil {
 		if node := workflow.Extensions.GetOrZero("x-restish-workflow"); node != nil {
@@ -63,6 +50,26 @@ func run(_ string, args []string, client *plugin.CommandClient) error {
 	}
 	if result := az.Validate(doc); result != nil && result.HasErrors() {
 		return result
+	}
+	inputs := map[string]any{}
+	if meta.Select != nil {
+		value, err := selectInput(client, meta.Select, sources)
+		if err != nil {
+			return err
+		}
+		inputs[meta.Select.Input] = value
+	}
+	for _, name := range inputsDoc.Required {
+		if _, selected := inputs[name]; selected {
+			continue
+		}
+		answer, err := client.Prompt(name+": ", false)
+		if err != nil {
+			return err
+		} else if answer.Error != "" {
+			return fmt.Errorf("prompt: %s", answer.Error)
+		}
+		inputs[name] = answer.Value
 	}
 	result, err := az.NewEngine(doc, exec, sources).RunWorkflow(context.Background(), workflow.WorkflowId, inputs)
 	if err != nil {

@@ -42,19 +42,35 @@ arazzo               0.1.0      capabilities: command
 - The document contains exactly one workflow and one or more OpenAPI sources.
 - Each source `name` is a registered Restish API name.
 - Steps use source-qualified `operationPath`; `operationId` is not supported.
-- Required string workflow inputs are prompted interactively.
+- Required string workflow inputs are prompted interactively unless supplied by
+  the API-backed selector below.
 - Non-string workflow inputs are not yet supported.
 - Parameters are not yet mapped into path, query, or headers. Inputs can be
   used in Arazzo request bodies.
 - The last HTTP response body is the command output.
 
-Optional workflow presentation metadata:
+Optional workflow metadata:
 
 ```yaml
 x-restish-workflow:
+  select:
+    input: petId
+    source: pets
+    method: GET
+    path: /pets
+    items: pets
+    label: name
+    value: id
   format: table
   columns: [id, name]
 ```
+
+`select` makes one preflight request through the named Restish API, prints a
+numbered list, and assigns the chosen `value` to `input`. The normal prompt for
+that input is skipped. `method` defaults to `GET`; `path` must start with `/`.
+The response can be an array of objects, or `items` can name one top-level
+array field. `label` and `value` name top-level string fields in each object.
+One selector is supported per workflow.
 
 `format: table` currently supports a single object. An explicit
 `RSH_OUTPUT_FORMAT` bypasses it and delegates the complete body to Restish.
@@ -62,8 +78,9 @@ This table extension is the plugin's only custom output renderer.
 
 ## Use
 
-Given Restish APIs named `pets` and `owners`, this workflow calls two `pets`
-endpoints and one `owners` endpoint. Save it as `arazzo.yaml`:
+Given Restish APIs named `pets` and `owners`, the selector first lists pets.
+The workflow then calls two `pets` endpoints and one `owners` endpoint. Save it
+as `arazzo.yaml`:
 
 ```yaml
 arazzo: 1.0.1
@@ -116,6 +133,14 @@ workflows:
         successCriteria:
           - condition: $statusCode == 200
     x-restish-workflow:
+      select:
+        input: petId
+        source: pets
+        method: GET
+        path: /pets
+        items: pets
+        label: name
+        value: id
       format: table
       columns: [id, name]
 ```
@@ -126,7 +151,10 @@ sequenceDiagram
     participant Plugin as restish-arazzo
     participant Pets as pets API
     participant Owners as owners API
-    User->>Plugin: petId
+    Plugin->>Pets: GET /pets
+    Pets-->>Plugin: pet choices
+    Plugin-->>User: numbered pet list
+    User->>Plugin: selected petId
     Plugin->>Pets: POST /pets/search
     Pets-->>Plugin: pet and ownerId
     Plugin->>Owners: POST /owners/lookup (ownerId)
@@ -136,12 +164,14 @@ sequenceDiagram
     Plugin-->>User: table or Restish output
 ```
 
-Run the document and answer its required input prompt. The final
-`POST /pets/views` response becomes the command output:
+Run the document and choose a pet. The final `POST /pets/views` response
+becomes the command output:
 
 ```console
 $ restish workflow run ./arazzo.yaml
-petId: 42
+1) Mochi
+2) Pixel
+Select petId [1-2]: 1
 ┌────┬───────┐
 │ ID │ NAME  │
 ├────┼───────┤
@@ -153,7 +183,9 @@ Captured JSON override:
 
 ```console
 $ RSH_OUTPUT_FORMAT=json RSH_PRINT=bp restish workflow run ./arazzo.yaml
-petId: 42
+1) Mochi
+2) Pixel
+Select petId [1-2]: 1
 {
   "hidden": true,
   "id": 42,

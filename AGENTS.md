@@ -21,6 +21,8 @@ the implementation aligned with the workflow contract in `README.md`.
 - `workflow.go`: command handling and workflow execution.
 - `sources.go`: Restish API loading and Arazzo source mapping.
 - `executor.go`: Arazzo operation execution through Restish.
+- `selection.go`: API-backed workflow input selection.
+- `choices.go`: selector response validation and rendering.
 - `table.go`: boxed single-object table rendering.
 - `*_test.go`: focused behavior checks and the 100-line guard.
 
