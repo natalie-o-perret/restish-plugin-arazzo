@@ -1,5 +1,10 @@
 # restish-plugin-arazzo
 
+[![CI](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/ci.yml/badge.svg)](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/ci.yml)
+[![Docs](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/docs.yml/badge.svg)](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/docs.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/natalie-o-perret/restish-plugin-arazzo.svg)](https://pkg.go.dev/github.com/natalie-o-perret/restish-plugin-arazzo)
+[![License](https://img.shields.io/github/license/natalie-o-perret/restish-plugin-arazzo)](LICENSE)
+
 `restish-plugin-arazzo` builds the `restish-arazzo` plugin, which adds
 `restish workflow run FILE`. It executes [Arazzo 1.0.x][arazzo-spec] documents
 containing one workflow across existing Restish API profiles. Arazzo is an
