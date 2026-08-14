@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	plugin.Run(plugin.Manifest{Name: "workflow", Version: "0.1.0", RestishAPIVersion: 2, Hooks: []string{"command"}}, []plugin.CommandDecl{{Name: "workflow", Short: "Run Arazzo workflows"}}, run)
+	plugin.Run(plugin.Manifest{Name: "arazzo", Version: "0.1.0", RestishAPIVersion: 2, Hooks: []string{"command"}}, []plugin.CommandDecl{{Name: "workflow", Short: "Run Arazzo workflows"}}, run)
 }
 func run(_ string, args []string, client *plugin.CommandClient) error {
 	if len(args) != 2 || args[0] != "run" {

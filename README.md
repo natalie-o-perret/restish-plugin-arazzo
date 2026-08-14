@@ -1,8 +1,9 @@
 # restish-plugin-arazzo
 
-`restish-plugin-arazzo` builds the `restish-workflow` plugin, which adds
-`restish workflow run FILE`. It executes Arazzo 1.0.x documents containing one
-workflow across existing Restish API profiles.
+`restish-plugin-arazzo` builds the `restish-arazzo` plugin, which adds
+`restish workflow run FILE`. It executes [Arazzo 1.0.x][arazzo-spec] documents
+containing one workflow across existing Restish API profiles. Arazzo is an
+OpenAPI Initiative specification, not an RFC.
 
 The plugin uses [`pb33f/libopenapi`](https://github.com/pb33f/libopenapi)
 v0.38.7 for Arazzo parsing and execution. Restish owns HTTP, authentication,
@@ -11,21 +12,21 @@ TLS, retries, middleware, and profiles.
 ## Install
 
 ```console
-$ go build -o restish-workflow .
-$ restish plugin install ./restish-workflow --yes
-Plugin source: ./restish-workflow
-Resolved path: ./restish-workflow
-Manifest: workflow 0.1.0
+$ go build -o restish-arazzo .
+$ restish plugin install ./restish-arazzo --yes
+Plugin source: ./restish-arazzo
+Resolved path: ./restish-arazzo
+Manifest: arazzo 0.1.0
 Capabilities: command
 warning: installed plugins are trusted executables and may run arbitrary code on future restish invocations
-Installed plugin restish-workflow
+Installed plugin restish-arazzo
 ```
 
 Confirm that Restish discovered the command:
 
 ```console
 $ restish plugin list
-workflow             0.1.0      capabilities: command
+arazzo               0.1.0      capabilities: command
   commands: workflow
 ```
 
@@ -115,7 +116,7 @@ workflows:
 ```mermaid
 sequenceDiagram
     actor User
-    participant Plugin as restish-workflow
+    participant Plugin as restish-arazzo
     participant Pets as pets API
     participant Owners as owners API
     User->>Plugin: petId
@@ -176,11 +177,13 @@ Follow the official [Plugin Quickstart](https://rest.sh/docs/plugins/quickstart/
 Build the plugin, then inspect its CBOR discovery messages as decoded JSON:
 
 ```console
-$ go build -o restish-workflow .
-$ restish plugin debug ./restish-workflow -- --rsh-plugin-manifest
-$ restish plugin debug ./restish-workflow -- --rsh-plugin-commands
+$ go build -o restish-arazzo .
+$ restish plugin debug ./restish-arazzo -- --rsh-plugin-manifest
+$ restish plugin debug ./restish-arazzo -- --rsh-plugin-commands
 ```
 
 The first command must report the `command` capability and plugin API v2. The
 second must report the `workflow` command. Keep stdout reserved for Restish
 protocol messages and send API requests through `plugin.CommandClient`.
+
+[arazzo-spec]: https://spec.openapis.org/arazzo/v1.0.1.html
