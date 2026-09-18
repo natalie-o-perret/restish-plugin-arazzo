@@ -3,7 +3,6 @@
 ![Arazzo workflow tapestry](assets/restish-arazzo.webp)
 
 [![CI](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/ci.yml/badge.svg)](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/ci.yml)
-[![Docs](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/docs.yml/badge.svg)](https://github.com/natalie-o-perret/restish-plugin-arazzo/actions/workflows/docs.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/natalie-o-perret/restish-plugin-arazzo.svg)](https://pkg.go.dev/github.com/natalie-o-perret/restish-plugin-arazzo)
 [![License](https://img.shields.io/github/license/natalie-o-perret/restish-plugin-arazzo)](LICENSE)
 
